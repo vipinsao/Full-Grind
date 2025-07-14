@@ -1,18 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
+import Result from "./Result";
 
-const HomePage = ({ link, setLink }) => {
+const HomePage = ({ link, setLink, loading, setLoading }) => {
+  const [shorterLink, setShorterLink] = useState("");
+  const handleLink = async () => {
+    if (!link.trim()) {
+      return alert("Please Enter Link!!!");
+    } else if (!link.startsWith("http://") && !link.startsWith("https://")) {
+      setLink("");
+      return alert("invalid url, include http:// or https://");
+    } else {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          "https://corsproxy.io/?https://cleanuri.com/api/v1/shorten",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              url: link,
+            }),
+          }
+        );
+        const data = await res.json();
+        console.log(data);
+        // if (data.) {
+        //   console.log("Shortened url", data.result.full_short_link);
+        //   setShorterLink(data.result.full_short_link);
+        // } else {
+        //   alert("Something went wrong!!!");
+        // }
+        setLink("");
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        alert("Failed to shortner a link");
+        throw new Error("There is some error!!!", error);
+      }
+    }
+  };
   return (
-    <div className="w-full-screen font-serif bg-zinc-800">
-      <h1>Welcome To Link-Shortner</h1>
-      <div>
+    <div className="flex mt-8 w-[60%] flex-col justify-center items-center font-serif border-2">
+      <h1 className="text-5xl">Welcome To Link-Shortner</h1>
+      <div className="flex justify-between items-center mt-4 gap-4">
         <input
           type="text"
           value={link}
-          className="px-3 py-2 rounded-md"
+          className="px-3 py-2 rounded-md border-2"
           onChange={(e) => setLink(e.target.value)}
         />
-        <button disabled={link.trim()}>Short it</button>
+        <button
+          disabled={!link.trim()}
+          className="border px-3 py-1 rounded-md bg-zinc-900 hover:bg-zinc-700 cursor-pointer"
+          onClick={handleLink}
+        >
+          Short it
+        </button>
       </div>
+      {loading ? (
+        <p>loading...</p>
+      ) : (
+        shorterLink && <Result shorterLink={shorterLink} />
+      )}
     </div>
   );
 };
