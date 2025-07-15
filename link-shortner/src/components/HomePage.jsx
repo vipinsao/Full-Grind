@@ -12,26 +12,18 @@ const HomePage = ({ link, setLink, loading, setLoading }) => {
     } else {
       try {
         setLoading(true);
-        const res = await fetch(
-          "https://corsproxy.io/?https://cleanuri.com/api/v1/shorten",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-              url: link,
-            }),
-          }
-        );
+        const res = await fetch(`${import.meta.env.VITE_API_END_POINT}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            link,
+          }),
+        });
         const data = await res.json();
-        console.log(data);
-        // if (data.) {
-        //   console.log("Shortened url", data.result.full_short_link);
-        //   setShorterLink(data.result.full_short_link);
-        // } else {
-        //   alert("Something went wrong!!!");
-        // }
+        console.log(data.short_url);
+        setShorterLink(data.short_url);
         setLink("");
         setLoading(false);
       } catch (error) {
@@ -42,7 +34,7 @@ const HomePage = ({ link, setLink, loading, setLoading }) => {
     }
   };
   return (
-    <div className="flex mt-8 w-[60%] flex-col justify-center items-center font-serif border-2">
+    <div className="flex mt-8 w-[80%] flex-col justify-center items-center font-serif border-2">
       <h1 className="text-5xl">Welcome To Link-Shortner</h1>
       <div className="flex justify-between items-center mt-4 gap-4">
         <input
@@ -53,7 +45,7 @@ const HomePage = ({ link, setLink, loading, setLoading }) => {
         />
         <button
           disabled={!link.trim()}
-          className="border px-3 py-1 rounded-md bg-zinc-900 hover:bg-zinc-700 cursor-pointer"
+          className="border px-3 py-1 rounded-md bg-zinc-900 hover:bg-zinc-700 cursor-pointer "
           onClick={handleLink}
         >
           Short it

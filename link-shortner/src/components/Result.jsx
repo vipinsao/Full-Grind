@@ -8,9 +8,11 @@ const Result = ({ shorterLink }) => {
         type="text"
         value={shorterLink}
         disabled
-        className="border rounded-md px-3 py-1"
+        className="border rounded-md px-3 py-1 w-full"
       />
-      <button className="px-3 py-1 text-white cursor-pointer">Copy</button>
+      <button className="px-3 py-1 text-white cursor-pointer border rounded-md bg-zinc-900 hover:bg-zinc-700">
+        Copy
+      </button>
     </div>
   );
 };
